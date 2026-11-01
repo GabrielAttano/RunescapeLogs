@@ -1,0 +1,121 @@
+package com.rslogs.loggers.boss;
+
+import com.rslogs.module.PluginLifecycleComponent;
+import com.rslogs.util.NpcAttack;
+import com.rslogs.util.LogManager;
+import com.rslogs.util.NpcAnimation;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.Actor;
+import net.runelite.api.Client;
+import net.runelite.api.GraphicsObject;
+import net.runelite.api.NPC;
+import net.runelite.api.events.*;
+import net.runelite.api.gameval.NpcID;
+import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.eventbus.Subscribe;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Slf4j
+@Singleton
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class MadAngelLogger implements PluginLifecycleComponent {
+    private final EventBus eventBus;
+    private final Client client;
+
+    private final LogManager logManager;
+
+    private final int BLAST_ATTACK_SHADOW_ID = 1448;
+    private final int SWIPE_ATTACK_SMOKE_ID = 2184;
+    private int lastSwipeTick;
+
+    @Override
+    public void startUp() {
+        eventBus.register(this);
+    }
+
+    @Override
+    public void shutDown() {
+        eventBus.unregister(this);
+    }
+
+    @Subscribe
+    public void onNpcChanged(NpcChanged event) {
+        if (isMadAngel(event.getNpc()) && !logManager.isLogging()) {
+            logManager.startLogging();
+            return;
+        }
+
+        if (isMadAngelDead(event.getNpc())) {
+            logManager.endLogging();
+        }
+    }
+
+    @Subscribe
+    public void onNpcDespawned(NpcDespawned event) {
+        if (!logManager.isLogging()) {
+            return;
+    }
+
+        if (isMadAngel(event.getNpc())) {
+            logManager.endLogging();
+        }
+    }
+
+    @Subscribe
+    public void onGraphicsObjectCreated(GraphicsObjectCreated event) {
+        if (!logManager.isLogging()) {
+            return;
+        }
+
+        GraphicsObject graphicsObject = event.getGraphicsObject();
+        if (graphicsObject.getId() == BLAST_ATTACK_SHADOW_ID) {
+            logManager.logNpcAttack(NpcID.MAD_ANGEL, "Blast attack");
+            log.debug("Blast attack posX: {}, posY: {}", graphicsObject.getLocation().getX(), graphicsObject.getLocation().getY());
+            return;
+        }
+
+        int tick = client.getTickCount();
+        if (graphicsObject.getId() == SWIPE_ATTACK_SMOKE_ID && lastSwipeTick != tick) {
+            logManager.logNpcAttack(NpcID.MAD_ANGEL, "Swipe attack");
+            lastSwipeTick = tick;
+        }
+    }
+
+    @Subscribe
+    public void onAnimationChanged(AnimationChanged event) {
+        if (!logManager.isLogging()) {
+            return;
+        }
+
+        Actor actor = event.getActor();
+        if (!isMadAngel(actor)) {
+            return;
+        }
+
+        NpcAnimation npcAnimation = NpcAnimation.getAnimation(actor.getAnimation());
+        if (npcAnimation != null) {
+            logManager.logNpcAttack(NpcID.MAD_ANGEL, npcAnimation.getName());
+        }
+    }
+
+    private boolean isMadAngel(Actor actor) {
+        if (!(actor instanceof NPC)) {
+            return false;
+        }
+
+        int actorId = ((NPC) actor).getId();
+        return actorId == NpcID.MAD_ANGEL;
+    }
+
+    private boolean isMadAngelDead(Actor actor) {
+        if (!(actor instanceof NPC)) {
+            return false;
+        }
+
+        int actorId = ((NPC) actor).getId();
+        return actorId == NpcID.MAD_ANGEL_INITIAL || actorId == NpcID.MAD_ANGEL_DEAD;
+    }
+}
