@@ -2,6 +2,7 @@ package com.rslogs.loggers.boss;
 
 import com.rslogs.module.PluginLifecycleComponent;
 import com.rslogs.util.LogManager;
+import com.rslogs.util.LoggableEncounter;
 import com.rslogs.util.NpcAnimation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +37,7 @@ public class MadAngelLogger implements PluginLifecycleComponent {
     @Override
     public void startUp() {
         eventBus.register(this);
-        lastSwipeTick = 0;
-        lastExplosionTick = 0;
+        reset();
     }
 
     @Override
@@ -45,10 +45,15 @@ public class MadAngelLogger implements PluginLifecycleComponent {
         eventBus.unregister(this);
     }
 
+    private void reset() {
+        lastSwipeTick = 0;
+        lastExplosionTick = 0;
+    }
+
     @Subscribe
     public void onNpcChanged(NpcChanged event) {
         if (isMadAngel(event.getNpc()) && !logManager.isLogging()) {
-            logManager.startLogging();
+            logManager.startLogging(LoggableEncounter.MAD_ANGEL);
             return;
         }
 
