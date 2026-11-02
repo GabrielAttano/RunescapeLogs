@@ -1,7 +1,6 @@
 package com.rslogs.loggers.boss;
 
 import com.rslogs.module.PluginLifecycleComponent;
-import com.rslogs.util.NpcAttack;
 import com.rslogs.util.LogManager;
 import com.rslogs.util.NpcAnimation;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +27,17 @@ public class MadAngelLogger implements PluginLifecycleComponent {
     private final LogManager logManager;
 
     private final int BLAST_ATTACK_SHADOW_ID = 1448;
+    private final int BLAST_ATTACK_EXPLOSION_ID = 4016;
     private final int SWIPE_ATTACK_SMOKE_ID = 2184;
+
     private int lastSwipeTick;
+    private int lastExplosionTick;
 
     @Override
     public void startUp() {
         eventBus.register(this);
+        lastSwipeTick = 0;
+        lastExplosionTick = 0;
     }
 
     @Override
@@ -72,15 +76,20 @@ public class MadAngelLogger implements PluginLifecycleComponent {
 
         GraphicsObject graphicsObject = event.getGraphicsObject();
         if (graphicsObject.getId() == BLAST_ATTACK_SHADOW_ID) {
-            logManager.logNpcAttack(NpcID.MAD_ANGEL, "Blast attack");
-            log.debug("Blast attack posX: {}, posY: {}", graphicsObject.getLocation().getX(), graphicsObject.getLocation().getY());
+            logManager.logNpcSkillshot(NpcID.MAD_ANGEL, "Blast attack projectile", graphicsObject.getLocation());
             return;
         }
 
         int tick = client.getTickCount();
-        if (graphicsObject.getId() == SWIPE_ATTACK_SMOKE_ID && lastSwipeTick != tick) {
+        if (lastSwipeTick != tick && graphicsObject.getId() == SWIPE_ATTACK_SMOKE_ID) {
             logManager.logNpcAttack(NpcID.MAD_ANGEL, "Swipe attack");
             lastSwipeTick = tick;
+            return;
+        }
+
+        if (lastExplosionTick != tick && graphicsObject.getId() == BLAST_ATTACK_EXPLOSION_ID) {
+            logManager.logNpcAttack(NpcID.MAD_ANGEL, "Blast attack explosion");
+            lastExplosionTick = tick;
         }
     }
 

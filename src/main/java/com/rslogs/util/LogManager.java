@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.coords.LocalPoint;
 import net.runelite.client.eventbus.EventBus;
 
 import javax.inject.Inject;
@@ -51,5 +52,11 @@ public class LogManager implements PluginLifecycleComponent {
         int tick = client.getTickCount();
         log.debug("== npcAttack ==");
         log.debug("tick: {} - attack: {}", tick, attackName);
+    }
+
+    public void logNpcSkillshot(int npcId, String attackName, LocalPoint point) {
+        int tick = client.getTickCount();
+        log.debug("== npcSkillshot ==");
+        log.debug("tick: {} - attack: {} - posX: {}, posY: {}", tick, attackName, point.getX(), point.getY());
     }
 }
