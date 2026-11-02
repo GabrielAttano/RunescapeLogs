@@ -12,6 +12,7 @@ import net.runelite.api.GraphicsObject;
 import net.runelite.api.NPC;
 import net.runelite.api.events.*;
 import net.runelite.api.gameval.NpcID;
+import net.runelite.api.gameval.SpotanimID;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 
@@ -27,9 +28,9 @@ public class MadAngelLogger implements PluginLifecycleComponent {
 
     private final LogManager logManager;
 
-    private final int BLAST_ATTACK_SHADOW_ID = 1448;
-    private final int BLAST_ATTACK_EXPLOSION_ID = 4016;
-    private final int SWIPE_ATTACK_SMOKE_ID = 2184;
+    private final int BLAST_ATTACK_SHADOW = SpotanimID.GARGBOSS_DEBRIS_SHADOW_150;
+    private final int BLAST_ATTACK_EXPLOSION_ID = SpotanimID.VFX_MAD_ANGEL_ATTACK_BOMB_THROW_IMPACT_01;
+    private final int SWIPE_ATTACK_SMOKE_ID = SpotanimID.ZEBAK_ROAR_WAVE_DUST;
 
     private int lastSwipeTick;
     private int lastExplosionTick;
@@ -80,7 +81,7 @@ public class MadAngelLogger implements PluginLifecycleComponent {
         }
 
         GraphicsObject graphicsObject = event.getGraphicsObject();
-        if (graphicsObject.getId() == BLAST_ATTACK_SHADOW_ID) {
+        if (graphicsObject.getId() == BLAST_ATTACK_SHADOW) {
             logManager.logNpcSkillshot(NpcID.MAD_ANGEL, "Blast attack projectile", graphicsObject.getLocation());
             return;
         }
