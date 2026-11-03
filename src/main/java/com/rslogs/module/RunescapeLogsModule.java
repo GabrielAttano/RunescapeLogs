@@ -6,6 +6,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.rslogs.RunescapeLogsConfig;
 import com.rslogs.loggers.boss.MadAngelLogger;
+import com.rslogs.loggers.boss.ScurriusLogger;
 import com.rslogs.loggers.player.PlayerAttackLogger;
 import com.rslogs.loggers.player.PrayerLogger;
 import com.rslogs.util.LogManager;
@@ -22,11 +23,14 @@ public class RunescapeLogsModule extends AbstractModule  {
     Set<PluginLifecycleComponent> lifecycleComponents(
         LogManager logManager,
         MadAngelLogger madAngelLogger,
+        ScurriusLogger scurriusLogger,
         PlayerAttackLogger playerAttackLogger
+
     ) {
         return ImmutableSet.of(
                 logManager,
                 madAngelLogger,
+                scurriusLogger,
                 playerAttackLogger
         );
     }

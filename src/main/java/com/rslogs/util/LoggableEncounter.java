@@ -1,5 +1,6 @@
 package com.rslogs.util;
 
 public enum LoggableEncounter {
-    MAD_ANGEL
+    MAD_ANGEL,
+    SCURRIUS
 }
