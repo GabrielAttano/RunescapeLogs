@@ -3,7 +3,7 @@ package com.rslogs.loggers.boss;
 import com.rslogs.module.PluginLifecycleComponent;
 import com.rslogs.util.LogManager;
 import com.rslogs.util.LoggableEncounter;
-import com.rslogs.util.NpcAnimation;
+import com.rslogs.util.NpcAnimationData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
@@ -110,9 +110,9 @@ public class MadAngelLogger implements PluginLifecycleComponent {
             return;
         }
 
-        NpcAnimation npcAnimation = NpcAnimation.getAnimation(actor.getAnimation());
-        if (npcAnimation != null) {
-            logManager.logNpcAttack(NpcID.MAD_ANGEL, npcAnimation.getName());
+        NpcAnimationData npcAnimationData = NpcAnimationData.getAnimation(actor.getAnimation());
+        if (npcAnimationData != null) {
+            logManager.logNpcAttack(NpcID.MAD_ANGEL, npcAnimationData.getName());
         }
     }
 
