@@ -27,16 +27,16 @@
 package com.rslogs.loggers.player;
 
 import com.rslogs.module.PluginLifecycleComponent;
+import com.rslogs.util.AttackCooldown;
 import com.rslogs.util.LogManager;
+import com.rslogs.util.LoggableEncounter;
 import com.rslogs.util.PlayerAttack;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.Actor;
 import net.runelite.api.Client;
-import net.runelite.api.EquipmentInventorySlot;
-import net.runelite.api.Item;
-import net.runelite.api.ItemContainer;
+import net.runelite.api.Player;
 import net.runelite.api.events.GameTick;
-import net.runelite.api.gameval.InventoryID;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.NPCManager;
@@ -55,10 +55,6 @@ public class PlayerAttackLogger implements PluginLifecycleComponent {
     private final LogManager logManager;
 
     private AttackState attackState = AttackState.NOT_ATTACKING;
-    // The state of the renderer, will lag a few cycles behind the plugin's state. "cycles" in this comment
-    // refers to the client.getGameCycle() method, a cycle occurs every 20ms, meaning 30 of them occur per
-    // game tick.
-    public AttackState renderedState = AttackState.NOT_ATTACKING;
 
     @Override
     public void startUp() {
@@ -100,12 +96,19 @@ public class PlayerAttackLogger implements PluginLifecycleComponent {
     }
 
     private void performAttack() {
+        Actor target = client.getLocalPlayer().getInteracting();
+
         logManager.logPlayerAttack();
-        attackState = AttackState.DELAYED_FIRST_TICK;
-    }
 
-    private void setAttackDelay() {
-
+        int predictedCooldown = AttackCooldown.predictAttackCooldown(client, target, logManager.getEncounter());
+        if (predictedCooldown < 0) {
+            // fallback
+            attackState = AttackState.DELAYED_FIRST_TICK;
+        } else if (predictedCooldown == 1) {
+            attackState = AttackState.DELAYED;
+        } else {
+            attackState = AttackState.DELAYED_FIRST_TICK;
+        }
     }
 
     public enum AttackState

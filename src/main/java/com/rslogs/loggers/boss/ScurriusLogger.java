@@ -1,6 +1,5 @@
 package com.rslogs.loggers.boss;
 
-import com.rslogs.RunescapeLogsConfig;
 import com.rslogs.module.PluginLifecycleComponent;
 import com.rslogs.util.LogManager;
 import com.rslogs.util.LoggableEncounter;

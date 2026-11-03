@@ -8,7 +8,6 @@ import com.rslogs.RunescapeLogsConfig;
 import com.rslogs.loggers.boss.MadAngelLogger;
 import com.rslogs.loggers.boss.ScurriusLogger;
 import com.rslogs.loggers.player.PlayerAttackLogger;
-import com.rslogs.loggers.player.PrayerLogger;
 import com.rslogs.util.LogManager;
 import net.runelite.client.config.ConfigManager;
 
