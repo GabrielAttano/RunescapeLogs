@@ -4,8 +4,9 @@ import com.rslogs.module.PluginLifecycleComponent;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
+import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
+import net.runelite.api.gameval.InventoryID;
 import net.runelite.client.eventbus.EventBus;
 
 import javax.inject.Inject;
@@ -69,6 +70,29 @@ public class LogManager implements PluginLifecycleComponent {
         int tick = client.getTickCount();
         log.debug("== npcSkillshot ==");
         log.debug("tick: {} - attack: {} - posX: {}, posY: {}", encounterRelativeTick(tick), attackName, point.getX(), point.getY());
+    }
+
+    public void logPlayerAttack() {
+        int tick = client.getTickCount();
+
+        log.debug("== playerAttack ==");
+        final ItemContainer playerEquipment = client.getItemContainer(InventoryID.WORN);
+        if (playerEquipment != null) {
+            final Item weapon = playerEquipment.getItem(EquipmentInventorySlot.WEAPON.getSlotIdx());
+            final String weaponName = weapon != null
+                    ? client.getItemDefinition(weapon.getId()).getName()
+                    : "";
+
+            final Item shield = playerEquipment.getItem(EquipmentInventorySlot.SHIELD.getSlotIdx());
+            final String shieldName = shield != null
+                    ? client.getItemDefinition(shield.getId()).getName()
+                    : "";
+
+            log.debug("tick: {}, weapon: {}, shield: {}", encounterRelativeTick(tick), weaponName, shieldName);
+        } else {
+            log.warn("Fallback - unable to get playerEquipment.");
+            log.debug("tick: {}", encounterRelativeTick(tick));
+        }
     }
 
     private int encounterRelativeTick(int clientTick) {
