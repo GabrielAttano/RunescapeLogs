@@ -4,6 +4,7 @@ import com.rslogs.module.PluginLifecycleComponent;
 import com.rslogs.util.LogManager;
 import com.rslogs.util.LoggableEncounter;
 import com.rslogs.util.NpcAnimationData;
+import com.rslogs.util.NpcUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
@@ -32,6 +33,8 @@ public class MadAngelLogger implements PluginLifecycleComponent {
     private final int BLAST_ATTACK_EXPLOSION_ID = SpotanimID.VFX_MAD_ANGEL_ATTACK_BOMB_THROW_IMPACT_01;
     private final int SWIPE_ATTACK_SMOKE_ID = SpotanimID.ZEBAK_ROAR_WAVE_DUST;
 
+    private final int MAD_ANGEL_ID = NpcID.MAD_ANGEL;
+
     private int lastSwipeTick;
     private int lastExplosionTick;
 
@@ -53,7 +56,7 @@ public class MadAngelLogger implements PluginLifecycleComponent {
 
     @Subscribe
     public void onNpcChanged(NpcChanged event) {
-        if (isMadAngel(event.getNpc()) && !logManager.isLogging()) {
+        if (NpcUtils.isNpc(event.getNpc(), MAD_ANGEL_ID) && !logManager.isLogging()) {
             logManager.startLogging(LoggableEncounter.MAD_ANGEL);
             return;
         }
@@ -69,7 +72,7 @@ public class MadAngelLogger implements PluginLifecycleComponent {
             return;
     }
 
-        if (isMadAngel(event.getNpc())) {
+        if (NpcUtils.isNpc(event.getNpc(), MAD_ANGEL_ID)) {
             logManager.endLogging();
         }
     }
@@ -82,19 +85,19 @@ public class MadAngelLogger implements PluginLifecycleComponent {
 
         GraphicsObject graphicsObject = event.getGraphicsObject();
         if (graphicsObject.getId() == BLAST_ATTACK_SHADOW) {
-            logManager.logNpcSkillshot(NpcID.MAD_ANGEL, "Blast attack projectile", graphicsObject.getLocation());
+            logManager.logNpcSkillshot(MAD_ANGEL_ID, "Blast attack projectile", graphicsObject.getLocation());
             return;
         }
 
         int tick = client.getTickCount();
         if (lastSwipeTick != tick && graphicsObject.getId() == SWIPE_ATTACK_SMOKE_ID) {
-            logManager.logNpcAttack(NpcID.MAD_ANGEL, "Swipe attack");
+            logManager.logNpcAttack(MAD_ANGEL_ID, "Swipe attack");
             lastSwipeTick = tick;
             return;
         }
 
         if (lastExplosionTick != tick && graphicsObject.getId() == BLAST_ATTACK_EXPLOSION_ID) {
-            logManager.logNpcAttack(NpcID.MAD_ANGEL, "Blast attack explosion");
+            logManager.logNpcAttack(MAD_ANGEL_ID, "Blast attack explosion");
             lastExplosionTick = tick;
         }
     }
@@ -106,23 +109,14 @@ public class MadAngelLogger implements PluginLifecycleComponent {
         }
 
         Actor actor = event.getActor();
-        if (!isMadAngel(actor)) {
+        if (!isMadAngelDead(actor)) {
             return;
         }
 
         NpcAnimationData npcAnimationData = NpcAnimationData.getAnimation(actor.getAnimation());
         if (npcAnimationData != null) {
-            logManager.logNpcAttack(NpcID.MAD_ANGEL, npcAnimationData.getName());
+            logManager.logNpcAttack(MAD_ANGEL_ID, npcAnimationData.getName());
         }
-    }
-
-    private boolean isMadAngel(Actor actor) {
-        if (!(actor instanceof NPC)) {
-            return false;
-        }
-
-        int actorId = ((NPC) actor).getId();
-        return actorId == NpcID.MAD_ANGEL;
     }
 
     private boolean isMadAngelDead(Actor actor) {
