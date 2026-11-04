@@ -29,6 +29,7 @@ public class ScurriusLogger implements PluginLifecycleComponent {
 
     private final LogManager logManager;
 
+    // Not implementing group right now, should work the same
     // private final int GROUP_SCURRIUS_ID = NpcID.RAT_BOSS_NORMAL;
     private final int SOLO_SCURRIUS_ID = NpcID.RAT_BOSS_INSTANCE;
 
@@ -52,22 +53,14 @@ public class ScurriusLogger implements PluginLifecycleComponent {
 
     @Subscribe
     public void onNpcDespawned(NpcDespawned event) {
-        if (!logManager.isLogging()) {
-            return;
-        }
-
-        if (NpcUtils.isNpc(event.getNpc(), SOLO_SCURRIUS_ID)) {
+        if (logManager.isLogging() && NpcUtils.isNpc(event.getNpc(), SOLO_SCURRIUS_ID)) {
             logManager.endLogging();
         }
     }
 
     @Subscribe
     public void onActorDeath(ActorDeath event) {
-        if (!logManager.isLogging()) {
-            return;
-        }
-
-        if (NpcUtils.isNpc(event.getActor(), SOLO_SCURRIUS_ID)) {
+        if (logManager.isLogging() && NpcUtils.isNpc(event.getActor(), SOLO_SCURRIUS_ID)) {
             logManager.endLogging();
         }
     }

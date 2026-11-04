@@ -120,11 +120,6 @@ public class MadAngelLogger implements PluginLifecycleComponent {
     }
 
     private boolean isMadAngelDead(Actor actor) {
-        if (!(actor instanceof NPC)) {
-            return false;
-        }
-
-        int actorId = ((NPC) actor).getId();
-        return actorId == NpcID.MAD_ANGEL_INITIAL || actorId == NpcID.MAD_ANGEL_DEAD;
+        return NpcUtils.isNpc(actor, NpcID.MAD_ANGEL_INITIAL) || NpcUtils.isNpc(actor, NpcID.MAD_ANGEL_DEAD);
     }
 }
