@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.rslogs.util;
+package com.rslogs.util.data;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;

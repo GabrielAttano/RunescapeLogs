@@ -1,7 +1,7 @@
 package com.rslogs.loggers;
 
 import com.rslogs.module.PluginLifecycleComponent;
-import com.rslogs.util.LoggableEncounter;
+import com.rslogs.util.data.LoggableEncounter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

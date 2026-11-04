@@ -1,4 +1,4 @@
-package com.rslogs.util;
+package com.rslogs.util.data;
 
 import com.google.common.collect.ImmutableMap;
 import lombok.Getter;

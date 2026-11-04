@@ -27,6 +27,7 @@
 package com.rslogs.util;
 
 import com.google.common.collect.ImmutableSet;
+import com.rslogs.util.data.PlayerAnimationData;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;

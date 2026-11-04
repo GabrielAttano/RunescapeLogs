@@ -1,6 +1,7 @@
 package com.rslogs.util;
 
 import com.google.common.collect.ImmutableSet;
+import com.rslogs.util.data.LoggableEncounter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.gameval.ItemID;

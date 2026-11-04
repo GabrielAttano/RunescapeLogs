@@ -2,15 +2,14 @@ package com.rslogs.loggers.encounters;
 
 import com.rslogs.module.PluginLifecycleComponent;
 import com.rslogs.loggers.LogManager;
-import com.rslogs.util.LoggableEncounter;
-import com.rslogs.util.NpcAnimationData;
+import com.rslogs.util.data.LoggableEncounter;
+import com.rslogs.util.data.NpcAnimationData;
 import com.rslogs.util.NpcUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.GraphicsObject;
-import net.runelite.api.NPC;
 import net.runelite.api.events.*;
 import net.runelite.api.gameval.NpcID;
 import net.runelite.api.gameval.SpotanimID;
