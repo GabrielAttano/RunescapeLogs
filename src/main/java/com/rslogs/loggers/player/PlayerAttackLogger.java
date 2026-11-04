@@ -54,16 +54,21 @@ public class PlayerAttackLogger implements PluginLifecycleComponent {
 
     private final LogManager logManager;
 
-    private AttackState attackState = AttackState.NOT_ATTACKING;
+    private int attackCooldown;
 
     @Override
     public void startUp() {
         eventBus.register(this);
+        reset();
     }
 
     @Override
     public void shutDown() {
         eventBus.unregister(this);
+    }
+
+    private void reset() {
+        this.attackCooldown = 0;
     }
 
     @Subscribe
@@ -73,48 +78,18 @@ public class PlayerAttackLogger implements PluginLifecycleComponent {
         }
 
         final boolean isAttacking = PlayerAttack.isPlayerAttacking(client, npcManager);
-        switch (attackState) {
-            case NOT_ATTACKING:
-                if (isAttacking) {
-                    log.debug("onGametick NOT_ATTACKING performAttack");
-                    performAttack();
-                }
-                break;
-            case DELAYED_FIRST_TICK:
-                log.debug("onGametick DELAYED_FIRST_TICK delay");
-                attackState = AttackState.DELAYED;
-                break;
-            case DELAYED:
-                if (isAttacking) {
-                    log.debug("onGametick DELAYED performAttack");
-                    performAttack();
-                } else {
-                    log.debug("onGametick DELAYED notAttacking");
-                    attackState = AttackState.NOT_ATTACKING;
-                }
+        final int currentTick = client.getTickCount();
+        boolean canAttack = currentTick >= attackCooldown;
+        if (canAttack && isAttacking) {
+            performAttack(currentTick);
         }
     }
 
-    private void performAttack() {
-        Actor target = client.getLocalPlayer().getInteracting();
-
+    private void performAttack(int currentTick) {
         logManager.logPlayerAttack();
 
+        Actor target = client.getLocalPlayer().getInteracting();
         int predictedCooldown = AttackCooldown.predictAttackCooldown(client, target, logManager.getEncounter());
-        if (predictedCooldown < 0) {
-            // fallback
-            attackState = AttackState.DELAYED_FIRST_TICK;
-        } else if (predictedCooldown == 1) {
-            attackState = AttackState.DELAYED;
-        } else {
-            attackState = AttackState.DELAYED_FIRST_TICK;
-        }
-    }
-
-    public enum AttackState
-    {
-        NOT_ATTACKING,
-        DELAYED_FIRST_TICK,
-        DELAYED,
+        attackCooldown = currentTick + predictedCooldown;
     }
 }
