@@ -1,4 +1,4 @@
-package com.rslogs.loggers.boss;
+package com.rslogs.loggers.encounters;
 
 import com.rslogs.module.PluginLifecycleComponent;
 import com.rslogs.loggers.LogManager;
