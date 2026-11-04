@@ -35,9 +35,11 @@ import com.rslogs.module.RunescapeLogsModule;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.gameval.NpcID;
+import net.runelite.client.RuneLite;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
+import java.io.File;
 import java.util.*;
 
 @Slf4j
@@ -51,6 +53,8 @@ public class RunescapeLogsPlugin extends Plugin
 
 	private ComponentManager componentManager = null;
 
+	public static final File RS_LOGS_FOLDER = new File(RuneLite.RUNELITE_DIR, "runescape-logs");
+
 	@Override
 	public void configure(Binder binder)
 	{
@@ -59,6 +63,9 @@ public class RunescapeLogsPlugin extends Plugin
 
 	@Override
 	protected void startUp() throws Exception {
+		if (!RS_LOGS_FOLDER.exists() && !RS_LOGS_FOLDER.mkdirs()) {
+			log.warn("Failed to create RsLogs folder {}", RS_LOGS_FOLDER.getAbsolutePath());
+		}
 		if (componentManager == null) {
 			componentManager = injector.getInstance(ComponentManager.class);
 		}

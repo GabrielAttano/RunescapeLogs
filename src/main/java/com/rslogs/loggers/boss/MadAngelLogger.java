@@ -1,7 +1,7 @@
 package com.rslogs.loggers.boss;
 
 import com.rslogs.module.PluginLifecycleComponent;
-import com.rslogs.util.LogManager;
+import com.rslogs.loggers.LogManager;
 import com.rslogs.util.LoggableEncounter;
 import com.rslogs.util.NpcAnimationData;
 import com.rslogs.util.NpcUtils;

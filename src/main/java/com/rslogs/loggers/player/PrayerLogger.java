@@ -1,7 +1,9 @@
 package com.rslogs.loggers.player;
 
 import com.google.common.collect.ImmutableSet;
+import com.rslogs.RunescapeLogsConfig;
 import com.rslogs.module.PluginLifecycleComponent;
+import com.rslogs.loggers.LogManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -13,10 +15,7 @@ import net.runelite.client.eventbus.Subscribe;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Singleton
@@ -24,6 +23,8 @@ import java.util.Set;
 public class PrayerLogger implements PluginLifecycleComponent {
     private final EventBus eventBus;
     private final Client client;
+
+    private final LogManager logManager;
 
     private static final ImmutableSet<Prayer> TRACKED_PRAYERS = ImmutableSet.of(
             Prayer.BURST_OF_STRENGTH,
@@ -50,6 +51,14 @@ public class PrayerLogger implements PluginLifecycleComponent {
             Prayer.PROTECT_FROM_MISSILES
     );
 
+    private Set<Prayer> activePrayers = new HashSet<>();
+
+    @Override
+    public boolean isEnabled(RunescapeLogsConfig config) {
+        log.debug("PrayerLogger isEnabled hardCoded as false");
+        return false;
+    }
+
     @Override
     public void startUp() {
         eventBus.register(this);
@@ -62,6 +71,10 @@ public class PrayerLogger implements PluginLifecycleComponent {
 
     @Subscribe
     public void onGameTick(GameTick gameTick) {
+        if (!logManager.isLogging()) {
+            return;
+        }
+
         final int tickCount = client.getTickCount();
 
         processPrayers(tickCount);

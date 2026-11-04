@@ -28,14 +28,12 @@ package com.rslogs.loggers.player;
 
 import com.rslogs.module.PluginLifecycleComponent;
 import com.rslogs.util.AttackCooldown;
-import com.rslogs.util.LogManager;
-import com.rslogs.util.LoggableEncounter;
+import com.rslogs.loggers.LogManager;
 import com.rslogs.util.PlayerAttack;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
-import net.runelite.api.Player;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
